@@ -8,7 +8,7 @@ namespace Application.Interactors
     public class UserInteractor : IUserInteractor
     {
         private readonly IConduitClient _conduitClient;
-        private User _user;
+        private User? _user;
 
         public UserInteractor(IConduitClient conduitClient)
         {
@@ -18,6 +18,12 @@ namespace Application.Interactors
         public async Task<User> LoginAsync(Login login, CancellationToken cancellationToken = default)
         {
             _user = await _conduitClient.LoginAsync(login, cancellationToken);
+            return _user;
+        }
+
+        public async Task<User> LoginWithTokenAsync(string token, CancellationToken cancellationToken = default)
+        {
+            _user = await _conduitClient.LoginWithTokenAsync(token, cancellationToken);
             return _user;
         }
 

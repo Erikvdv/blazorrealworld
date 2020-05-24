@@ -1,7 +1,9 @@
 ﻿@using ServerClient.Extensions
+@using Application.Interactors
 
 @inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject IUserInteractor _userInteractor
 
 <Header Title="Conduit" />
 
@@ -12,13 +14,16 @@
 
 @code{
     [CascadingParameter]
-    private BrowserStateProvider _browserStateProvider { get; set; }
+    private BrowserStateProvider? _browserStateProvider { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
-        var token = await _browserStateProvider.GetTokenAsync();
-        await _authProvider!.LoginWithTokenAsync(token);
+        var _authProvider = _authenticationStateProvider as CustomAuthenticationStateProvider;
+        var token = await _browserStateProvider!.GetTokenAsync();
+        if (token == null) return;
+
+        var user = await _userInteractor!.LoginWithTokenAsync(token);
+        _authProvider!.SignInUser(user);
 
     }
 

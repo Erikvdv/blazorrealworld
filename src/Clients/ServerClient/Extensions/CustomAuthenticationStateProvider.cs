@@ -9,29 +9,10 @@ namespace ServerClient.Extensions
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly IConduitClient _conduitClient;
-        private ClaimsPrincipal _claimsPrincipal;
 
-        public CustomAuthenticationStateProvider(IConduitClient conduitClient)
-        {
-            _conduitClient = conduitClient ?? throw new ArgumentNullException(nameof(conduitClient));
-        }
+        private ClaimsPrincipal _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public async Task<User> LoginAsync(Login login)
-        {
-            var response = await _conduitClient.LoginAsync(login);
-            Authenticate(response);
-            return response;
-        }
-
-        public async Task LoginWithTokenAsync(string token)
-        {
-            if (token == null) return;
-            var response = await _conduitClient.LoginWithTokenAsync(token);
-            Authenticate(response);
-        }
-
-        private void Authenticate(User user)
+        public void SignInUser(User user)
         {
             var identity = new ClaimsIdentity(new[]
             {
@@ -40,8 +21,14 @@ namespace ServerClient.Extensions
                 new Claim("Token", user.Token)
             }, "conduit");
 
-
             _claimsPrincipal = new ClaimsPrincipal(identity);
+            var authState = Task.FromResult(new AuthenticationState(_claimsPrincipal));
+            NotifyAuthenticationStateChanged(authState);
+        }
+
+        public void SignOutUser()
+        {
+            _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
             var authState = Task.FromResult(new AuthenticationState(_claimsPrincipal));
             NotifyAuthenticationStateChanged(authState);
         }

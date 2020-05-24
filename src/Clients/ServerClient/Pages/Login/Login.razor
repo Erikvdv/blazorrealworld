@@ -78,8 +78,8 @@
         try
         {
             var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
-
-            var user = await _authProvider.LoginAsync(_login);
+            var user = await _userInteractor.LoginAsync(_login);
+            _authProvider!.SignInUser(user);
             await _browserStateProvider.SaveTokenAsync(user.Token);
             _navigationManager.NavigateTo("/");
 
