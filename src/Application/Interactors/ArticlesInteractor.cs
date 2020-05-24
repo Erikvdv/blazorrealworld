@@ -15,10 +15,11 @@ namespace Application.Interactors
             _conduitClient = conduitClient;
         }
 
-        public async Task<ArticleList> GetArticleListAsync(CancellationToken cancellationToken = default)
+        public async Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, CancellationToken cancellationToken = default)
         {
-            return await _conduitClient.GetArticleListAsync(cancellationToken);
+            return await _conduitClient.GetArticleListAsync(articleListFilter, cancellationToken);
         }
+
 
         public async Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default)
         {

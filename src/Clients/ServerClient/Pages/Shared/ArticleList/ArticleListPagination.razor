@@ -1,0 +1,32 @@
+﻿<nav>
+    <ul class="pagination">
+        @for (var i = 1; i < TotalPages + 1; i++)
+        {
+            var temp = i;
+            <li class="page-item @(i == ActivePage ? "active" : "")"
+                @onclick="_ =>
+                SelectPage(temp)">
+                <a class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
+
+
+@code {
+    [Parameter]
+    public int ActivePage { get; set; }
+
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageSelected { get; set; }
+
+    private void SelectPage(int pageNumber)
+    {
+        this.OnPageSelected.InvokeAsync(pageNumber);
+    }
+}

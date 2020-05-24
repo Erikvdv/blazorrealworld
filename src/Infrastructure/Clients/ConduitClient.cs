@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Application.Clients;
 using Application.Exceptions;
 using Application.Models;
@@ -41,10 +42,22 @@ namespace Infrastructure.Clients
             _httpClient.BaseAddress = new Uri(_settings.BaseAddress);
         }
 
-        public Task<ArticleList> GetArticleListAsync(CancellationToken cancellationToken = default)
+        public Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, CancellationToken cancellationToken = default)
         {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles?limit=10&offset=0", UriKind.Relative));
+            var querystring = GetQueryString(articleListFilter);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles?{querystring}", UriKind.Relative));
             httpRequest.Headers.Add("Accept", "application/json");
+
+            return HandleRequest<ArticleList>(httpRequest, cancellationToken);
+        }
+
+        public Task<ArticleList> GetArticleFeedAsync(ArticleListFilter articleListFilter, string token, CancellationToken cancellationToken = default)
+        {
+            var querystring = GetQueryString(articleListFilter);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/feed?{querystring}", UriKind.Relative));
+            httpRequest.Headers
+                .Add("Authorization", $"Token {token}");
+
 
             return HandleRequest<ArticleList>(httpRequest, cancellationToken);
         }
@@ -107,6 +120,15 @@ namespace Infrastructure.Clients
         private static async Task<string> GetResponseBody(HttpResponseMessage response)
         {
             return response.Content != null ? await response.Content.ReadAsStringAsync() : string.Empty;
+        }
+
+        public string GetQueryString(object obj)
+        {
+            var properties = from p in obj.GetType().GetProperties()
+                             where p.GetValue(obj, null) != null
+                             select p.Name + "=" + HttpUtility.UrlEncode(p.GetValue(obj, null).ToString());
+
+            return String.Join("&", properties.ToArray());
         }
 
 

@@ -1,4 +1,5 @@
 ﻿@using Application.Interactors
+@using Application.Models
 
 @inject IArticlesInteractor _articlesInteractor
 
@@ -14,18 +15,41 @@ else
     {
         <ArticleSummary Article=article />
     }
+    <ArticleListPagination ActivePage="_activePage" TotalPages="getNumberOfPages(_articleList.ArticlesCount, _pageSize)" OnPageSelected="OnPageSelected" />
 }
 
 
 
 
 @code {
+
+    [Parameter]
+    public ArticleListFilter _articleListFilter { get; set; }
+
     private bool _isLoading = true;
     private Application.Models.ArticleList _articleList;
+    private int _pageSize = 10;
+    private int _activePage = 1;
+
 
     protected override async Task OnInitializedAsync()
     {
-        _articleList = await _articlesInteractor.GetArticleListAsync();
+        _articleList = await _articlesInteractor.GetArticleListAsync(_articleListFilter);
         _isLoading = false;
     }
+
+    private async Task OnPageSelected(int page)
+    {
+        _isLoading = true;
+        _articleListFilter.Offset = page * _pageSize;
+        _articleList = await _articlesInteractor.GetArticleListAsync(_articleListFilter);
+        _activePage = page;
+        _isLoading = false;
+    }
+
+    private int getNumberOfPages(int totalCount, int perPage)
+    {
+        return (totalCount + perPage - 1) / perPage;
+    }
+
 }

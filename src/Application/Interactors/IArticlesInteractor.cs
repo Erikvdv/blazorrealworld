@@ -6,7 +6,7 @@ namespace Application.Interactors
 {
     public interface IArticlesInteractor
     {
-        Task<ArticleList> GetArticleListAsync(CancellationToken cancellationToken = default);
+        Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, CancellationToken cancellationToken = default);
         Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default);
     }
 }
