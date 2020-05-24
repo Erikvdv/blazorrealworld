@@ -9,5 +9,6 @@ namespace Application.Clients
         Task<ArticleList> GetArticleListAsync(CancellationToken cancellationToken = default);
         Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default);
         Task<User> LoginAsync(Login login, CancellationToken cancellationToken = default);
+        Task<User> LoginWithTokenAsync(string token, CancellationToken cancellationToken = default);
     }
 }

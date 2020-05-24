@@ -2,21 +2,28 @@
 
 @inject IArticlesInteractor _articlesInteractor
 
+
 @page "/"
 
 
 <div class="home-page">
-    @if (!_isLoggedIn)
-    {
-        <div class="banner">
-            <div class="container">
-                <h1 class="logo-font">
-                    @_appName
-                </h1>
-                <p>A place to share your <i>Blazor Server</i> knowledge.</p>
+
+    <AuthorizeView>
+        <Authorized>
+        </Authorized>
+        <NotAuthorized>
+            <div class="banner">
+                <div class="container">
+                    <h1 class="logo-font">
+                        @_appName
+                    </h1>
+                    <p>A place to share your <i>Blazor Server</i> knowledge.</p>
+                </div>
             </div>
-        </div>
-    }
+        </NotAuthorized>
+    </AuthorizeView>
+
+
     <div class="container page">
         <div class="row">
             <div class="col-md-9">
@@ -31,7 +38,7 @@
                         <div class="tag-list">
                             @foreach (string tag in _taglist)
                             {
-                                <a class="tag-default tag-pill" @onclick='(() => SelectedTag(tag))'> @tag </a>
+                                <a class="tag-default tag-pill" @onclick="_ => SelectedTag(tag)"> @tag </a>
                             }
                         </div>
                     }
@@ -48,8 +55,8 @@
 
 
 
-
 @code {
+
     private string _appName = "Conduit";
     private bool _isLoggedIn = false;
     private string _activeTab = "all";

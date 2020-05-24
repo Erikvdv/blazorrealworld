@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using ServerClient.Extensions
+
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Header Title="Conduit" />
 
@@ -8,5 +11,15 @@
 <Footer />
 
 @code{
+    [CascadingParameter]
+    private BrowserStateProvider _browserStateProvider { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
+        var token = await _browserStateProvider.GetTokenAsync();
+        await _authProvider!.LoginWithTokenAsync(token);
+
+    }
 
 }

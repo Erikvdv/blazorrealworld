@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Application.Interactors;
 using Application.Clients;
 using Infrastructure.Clients;
+using ServerClient.Extensions;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ServerClient
 {
@@ -29,6 +31,7 @@ namespace ServerClient
             services.AddHttpClient<IConduitClient, ConduitClient>();
             services.AddScoped<IArticlesInteractor, ArticlesInteractor>();
             services.AddScoped<IUserInteractor, UserInteractor>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
         }
 

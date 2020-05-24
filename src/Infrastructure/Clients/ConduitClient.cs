@@ -70,6 +70,14 @@ namespace Infrastructure.Clients
             return response.User;
         }
 
+        public async Task<User> LoginWithTokenAsync(string token, CancellationToken cancellationToken = default)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/user", UriKind.Relative)) { };
+            httpRequest.Headers.Add("authorization", $"Token {token}");
+            var response = await HandleRequest<LoginResponse>(httpRequest, cancellationToken);
+            return response.User;
+        }
+
         private async Task<T> HandleRequest<T>(HttpRequestMessage request,
             CancellationToken cancellationToken = default)
         {

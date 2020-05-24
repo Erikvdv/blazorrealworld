@@ -30,4 +30,9 @@ else
     {
         await _protectedLocalStorage.SetAsync("token", token);
     }
+
+    public async Task<string> GetTokenAsync()
+    {
+        return await _protectedLocalStorage.GetAsync<string>("token");
+    }
 }
