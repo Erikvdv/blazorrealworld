@@ -1,5 +1,11 @@
 ﻿<div class="feed-toggle">
     <ul class="nav nav-pills outline-active">
+        <li class="nav-item" @onclick="@(_ => SelectTab("feed"))">
+            <a href=""
+               class=@(ActiveTab == "feed" ? "nav-link active" : "nav-link")>
+                Your Feed
+            </a>
+        </li>
         <li class="nav-item" @onclick='(() => SelectTab("all"))'>
             <a href=""
                class="@(@ActiveTab == "all" ? "nav-link active" : "nav-link" )">
@@ -25,10 +31,11 @@
     public string ActiveTab { get; set; }
 
     [Parameter]
-    public EventCallback<string> SelectedTab { get; set; }
+    public EventCallback<string> OnSelectedTab { get; set; }
 
     private void SelectTab(string value)
     {
         this.ActiveTab = value;
+        OnSelectedTab.InvokeAsync(value);
     }
 }

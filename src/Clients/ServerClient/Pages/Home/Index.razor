@@ -28,7 +28,7 @@
     <div class="container page">
         <div class="row">
             <div class="col-md-9">
-                <HomeFeedNavigation ActiveTab="@_activeTab" ActiveTagName="@_selectedTag" />
+                <HomeFeedNavigation ActiveTab="@_activeTab" ActiveTagName="@_selectedTag" OnSelectedTab="SetTab" />
                 <ArticleList ArticleListFilter="_articleListFilter" />
             </div>
             <div class="col-md-3">
@@ -78,8 +78,16 @@
     private void SelectedTag(string tag)
     {
         _selectedTag = tag;
+        _activeTab = "";
         _articleListFilter.Offset = 0;
         _articleListFilter.Tag = tag;
+    }
+
+    private void SetTab(string tab)
+    {
+        _activeTab = tab;
+        _selectedTag = null;
+        _articleListFilter = new ArticleListFilter();
     }
 
 }
