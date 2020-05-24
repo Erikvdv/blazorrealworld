@@ -1,5 +1,6 @@
 ﻿@using Application.Interactors
 @using Application.Models
+@using Infrastructure.Utils
 
 @inject IArticlesInteractor _articlesInteractor
 
@@ -23,26 +24,43 @@ else
 
 @code {
 
-    [Parameter]
-    public ArticleListFilter _articleListFilter { get; set; }
+
 
     private bool _isLoading = true;
-    private Application.Models.ArticleList _articleList;
+    private Application.Models.ArticleList? _articleList;
     private int _pageSize = 10;
     private int _activePage = 1;
 
+    private ArticleListFilter? _filter;
 
-    protected override async Task OnInitializedAsync()
+
+    [Parameter]
+    public ArticleListFilter? ArticleListFilter { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
     {
-        _articleList = await _articlesInteractor.GetArticleListAsync(_articleListFilter);
+        if (CompareObjects.AreEqual(ArticleListFilter, _filter)) return;
+        if (ArticleListFilter == null) return;
+        _filter = (ArticleListFilter)ArticleListFilter.Clone();
+        await UpdateArticles(_filter);
+    }
+
+
+    private async Task UpdateArticles(ArticleListFilter filter)
+    {
+        _isLoading = true;
+        _activePage = 1;
+        _articleList = await _articlesInteractor.GetArticleListAsync(filter);
+
         _isLoading = false;
     }
 
     private async Task OnPageSelected(int page)
     {
         _isLoading = true;
-        _articleListFilter.Offset = page * _pageSize;
-        _articleList = await _articlesInteractor.GetArticleListAsync(_articleListFilter);
+        ArticleListFilter!.Offset = page * _pageSize;
+        _articleList = await _articlesInteractor.GetArticleListAsync(ArticleListFilter);
         _activePage = page;
         _isLoading = false;
     }

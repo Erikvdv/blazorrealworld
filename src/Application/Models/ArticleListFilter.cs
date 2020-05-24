@@ -1,14 +1,22 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Text.Json;
+
 
 namespace Application.Models
 {
-    public class ArticleListFilter
+    public class ArticleListFilter : ICloneable
     {
         public string? Tag { get; set; }
         public string? Author { get; set; }
         public string? Favorited { get; set; }
         public int Limit { get; set; } = 10;
         public int Offset { get; set; } = 0;
+
+        public object Clone()
+        {
+            var serialized = JsonSerializer.Serialize(this);
+            return JsonSerializer.Deserialize<ArticleListFilter>(serialized);
+        }
     }
 
 };

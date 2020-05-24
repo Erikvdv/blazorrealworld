@@ -28,8 +28,8 @@
     <div class="container page">
         <div class="row">
             <div class="col-md-9">
-                <HomeFeedNavigation ActiveTab="@_activeTab" />
-                <ArticleList _articleListFilter="new ArticleListFilter()" />
+                <HomeFeedNavigation ActiveTab="@_activeTab" ActiveTagName="@_selectedTag" />
+                <ArticleList ArticleListFilter="_articleListFilter" />
             </div>
             <div class="col-md-3">
                 <div class="sidebar">
@@ -57,13 +57,16 @@
 
 
 @code {
-
     private string _appName = "Conduit";
     private bool _isLoggedIn = false;
     private string _activeTab = "all";
     private string[] _taglist;
 
+    private string? _selectedTag;
+
     private bool _tagsLoaded = false;
+
+    public ArticleListFilter _articleListFilter = new ArticleListFilter();
 
 
     protected override async Task OnInitializedAsync()
@@ -74,7 +77,9 @@
 
     private void SelectedTag(string tag)
     {
-
+        _selectedTag = tag;
+        _articleListFilter.Offset = 0;
+        _articleListFilter.Tag = tag;
     }
 
 }

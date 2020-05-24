@@ -1,20 +1,25 @@
 ﻿<div class="feed-toggle">
     <ul class="nav nav-pills outline-active">
-
         <li class="nav-item" @onclick='(() => SelectTab("all"))'>
             <a href=""
                class="@(@ActiveTab == "all" ? "nav-link active" : "nav-link" )">
                 Global Feed
             </a>
         </li>
-
-
+        @if (!string.IsNullOrEmpty(ActiveTagName))
+        {
+            <li class="nav-item">
+                <a class="nav-link active">
+                    <i class="ion-pound"></i> @ActiveTagName
+                </a>
+            </li>
+        }
     </ul>
 </div>
 
 @code {
     [Parameter]
-    public string ActiveTagName { get; set; }
+    public string? ActiveTagName { get; set; }
 
     [Parameter]
     public string ActiveTab { get; set; }
