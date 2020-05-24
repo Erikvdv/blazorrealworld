@@ -1,0 +1,31 @@
+﻿@using Application.Interactors
+
+@inject IArticlesInteractor _articlesInteractor
+
+@if (_isLoading)
+{
+    <div>
+        Loading articles...
+    </div>
+}
+else
+{
+    @foreach (var article in _articleList.Articles)
+    {
+        <ArticleSummary Article=article />
+    }
+}
+
+
+
+
+@code {
+    private bool _isLoading = true;
+    private Application.Models.ArticleList _articleList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _articleList = await _articlesInteractor.GetArticleListAsync();
+        _isLoading = false;
+    }
+}

@@ -1,0 +1,72 @@
+﻿@using Application.Interactors
+
+@inject IArticlesInteractor _articlesInteractor
+
+@page "/"
+
+
+<div class="home-page">
+    @if (!_isLoggedIn)
+    {
+        <div class="banner">
+            <div class="container">
+                <h1 class="logo-font">
+                    @_appName
+                </h1>
+                <p>A place to share your <i>Blazor Server</i> knowledge.</p>
+            </div>
+        </div>
+    }
+    <div class="container page">
+        <div class="row">
+            <div class="col-md-9">
+                <HomeFeedNavigation ActiveTab="@_activeTab" />
+                <ArticleList />
+            </div>
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <p>Popular Tags</p>
+                    @if (_tagsLoaded)
+                    {
+                        <div class="tag-list">
+                            @foreach (string tag in _taglist)
+                            {
+                                <a class="tag-default tag-pill" @onclick='(() => SelectedTag(tag))'> @tag </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div>Loading tags...</div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    private string _appName = "Conduit";
+    private bool _isLoggedIn = false;
+    private string _activeTab = "all";
+    private string[] _taglist;
+
+    private bool _tagsLoaded = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _taglist = await _articlesInteractor.GetTagListAsync();
+        _tagsLoaded = true;
+    }
+
+    private void SelectedTag(string tag)
+    {
+
+    }
+
+}

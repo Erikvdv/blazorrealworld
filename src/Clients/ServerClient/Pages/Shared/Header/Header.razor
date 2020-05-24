@@ -1,0 +1,23 @@
+﻿<nav class="navbar navbar-light">
+    <div class="container">
+        <a href="/" class="navbar-brand">
+            @Title
+        </a>
+        @if (User != null)
+        {
+            <HeaderLoggedIn />
+        }
+        else
+        {
+            <HeaderLoggedOut />
+        }
+    </div>
+</nav>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string? User { get; set; }
+}

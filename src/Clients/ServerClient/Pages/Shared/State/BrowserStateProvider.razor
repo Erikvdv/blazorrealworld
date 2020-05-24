@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedLocalStorage _protectedLocalStorage
+
+@if (hasLoaded)
+{
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private bool hasLoaded;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private string? Token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Token = await _protectedLocalStorage.GetAsync<string>("token");
+        hasLoaded = true;
+    }
+
+    public async Task SaveTokenAsync(string token)
+    {
+        await _protectedLocalStorage.SetAsync("token", token);
+    }
+}
