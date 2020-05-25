@@ -1,4 +1,10 @@
-﻿<div class="feed-toggle">
+﻿@using ServerClient.Extensions
+
+@inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="feed-toggle">
     <ul class="nav nav-pills outline-active">
         <li class="nav-item" @onclick="@(_ => SelectTab("feed"))">
             <a href=""
@@ -33,8 +39,23 @@
     [Parameter]
     public EventCallback<string> OnSelectedTab { get; set; }
 
+    private bool _isLoggedIn { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
+        var authState = await _authProvider!.GetAuthenticationStateAsync();
+        _isLoggedIn = authState.User.Identity.IsAuthenticated;
+    }
+
     private void SelectTab(string value)
     {
+        if (value == "feed" && !_isLoggedIn)
+        {
+            _navigationManager.NavigateTo("/login");
+        }
+
+
         this.ActiveTab = value;
         OnSelectedTab.InvokeAsync(value);
     }
