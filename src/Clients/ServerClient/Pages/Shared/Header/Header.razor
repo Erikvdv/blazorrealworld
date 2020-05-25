@@ -1,23 +1,52 @@
 ﻿<nav class="navbar navbar-light">
     <div class="container">
-        <a href="/" class="navbar-brand">
+        <NavLink href="/" class="navbar-brand">
             @Title
-        </a>
-        @if (User != null)
-        {
-            <HeaderLoggedIn />
-        }
-        else
-        {
-            <HeaderLoggedOut />
-        }
+        </NavLink>
+        <AuthorizeView>
+            <Authorized>
+                <ul class="nav navbar-nav pull-xs-right">
+                    <li class="nav-item">
+                        <NavLink href="/" class="nav-link">Home</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink href="/editor" class="nav-link">
+                            <i class="ion-compose"></i>&nbsp;New Article
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink href="/settings/" class="nav-link">
+                            <i class="ion-gear-a"></i>&nbsp;Settings
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink href="/profile" class="nav-link">@context.User.Identity.Name</NavLink>
+                    </li>
+                </ul>
+            </Authorized>
+            <NotAuthorized>
+                <ul class="nav navbar-nav pull-xs-right">
+                    <li class="nav-item">
+                        <NavLink href="/" class="nav-link">Home</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink href="/login" class="nav-link">Sign in</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink href="/register" class="nav-link">Sign up</NavLink>
+                    </li>
+                </ul>
+            </NotAuthorized>
+        </AuthorizeView>
+
     </div>
 </nav>
 
 @code {
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [Parameter]
     public string? User { get; set; }
+
 }

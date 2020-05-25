@@ -1,0 +1,95 @@
+﻿@using Application.Interactors
+@using Application.Exceptions
+@using ServerClient.Extensions
+
+@inject NavigationManager _navigationManager
+@inject IUserInteractor _userInteractor
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@page "/profile"
+
+<div class="auth-page">
+    <div class="container page">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 col-xs-12">
+                <h1 class="text-xs-center">Sign In</h1>
+                <p class="text-xs-center">
+                    <a href="/login">
+                        Need an account?
+                    </a>
+                </p>
+
+
+                <ListErrors ErrorList=_errorList />
+
+
+
+
+                <EditForm Model="@_login" id="loginForm" OnValidSubmit="Submit">
+                    <fieldset>
+                        <fieldset class="form-group">
+                            <InputText class="form-control form-control-lg"
+                                       type="email"
+                                       placeholder="Email"
+                                       @bind-Value="_login.Email" />
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <InputText class="form-control form-control-lg"
+                                       type="password"
+                                       placeholder="Password"
+                                       @bind-Value="_login.Password" />
+                        </fieldset>
+                        <button class="btn btn-lg btn-primary pull-xs-right"
+                                type="submit">
+                            Sign in
+                        </button>
+                    </fieldset>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    private BrowserStateProvider _browserStateProvider { get; set; }
+
+    private Application.Models.Login _login = new Application.Models.Login { Password = "", Email = "" };
+    private bool _formIsValid;
+    private Dictionary<string, string[]> _errorList;
+
+    private void EmailUpdated(string email)
+    {
+        _login.Email = email;
+    }
+
+    private void PasswordUpdated(string password)
+    {
+        _login.Password = password;
+    }
+
+    private void ValidateForm()
+    {
+        _formIsValid = (!string.IsNullOrEmpty(_login.Email) && !string.IsNullOrEmpty(_login.Password));
+    }
+
+    private async Task Submit()
+    {
+        try
+        {
+            var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
+            var user = await _userInteractor.LoginAsync(_login);
+            _authProvider!.SignInUser(user);
+            await _browserStateProvider.SaveTokenAsync(user.Token);
+            _navigationManager.NavigateTo("/");
+
+        }
+        catch (ApiException ex)
+        {
+            _errorList = ex.ErrorList;
+        }
+
+
+    }
+
+}

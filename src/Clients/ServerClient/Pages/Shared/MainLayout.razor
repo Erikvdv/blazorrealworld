@@ -1,5 +1,6 @@
 ﻿@using ServerClient.Extensions
 @using Application.Interactors
+@using Application.Models;
 
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider _authenticationStateProvider
@@ -16,14 +17,16 @@
     [CascadingParameter]
     private BrowserStateProvider? _browserStateProvider { get; set; }
 
+    private User _user;
+
     protected override async Task OnInitializedAsync()
     {
         var _authProvider = _authenticationStateProvider as CustomAuthenticationStateProvider;
         var token = await _browserStateProvider!.GetTokenAsync();
         if (token == null) return;
 
-        var user = await _userInteractor!.LoginWithTokenAsync(token);
-        _authProvider!.SignInUser(user);
+        _user = await _userInteractor!.LoginWithTokenAsync(token);
+        _authProvider!.SignInUser(_user);
 
     }
 
