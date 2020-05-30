@@ -10,8 +10,7 @@ variables:
 steps:
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'build'
-    projects: '**/*WasmClient.csproj'
+    command: 'build $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   inputs:
