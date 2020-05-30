@@ -1,4 +1,4 @@
-﻿namespace ServerClient.Pages.Shared
+﻿namespace SharedLib.Pages.Shared
 {
     public enum FavoriteAction
     {

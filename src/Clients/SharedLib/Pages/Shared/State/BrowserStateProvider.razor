@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
-@inject ProtectedLocalStorage _protectedLocalStorage
+﻿@inject Blazored.LocalStorage.ILocalStorageService _localStorage
 
 @if (hasLoaded)
 {
@@ -22,17 +21,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Token = await _protectedLocalStorage.GetAsync<string>("token");
+
+        Token = await _localStorage.GetItemAsync<string>("token");
         hasLoaded = true;
     }
 
     public async Task SaveTokenAsync(string token)
     {
-        await _protectedLocalStorage.SetAsync("token", token);
+        await _localStorage.SetItemAsync("token", token);
     }
 
     public async Task<string> GetTokenAsync()
     {
-        return await _protectedLocalStorage.GetAsync<string>("token");
+        return await _localStorage.GetItemAsync<string>("token") ?? "";
     }
 }

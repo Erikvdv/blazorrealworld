@@ -5,7 +5,7 @@ using Application.Clients;
 using Application.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace ServerClient.Extensions
+namespace SharedLib.Extensions
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {

@@ -6,8 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Application.Interactors;
 using Application.Clients;
 using Infrastructure.Clients;
-using ServerClient.Extensions;
+using SharedLib.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
 
 namespace ServerClient
 {
@@ -25,6 +26,7 @@ namespace ServerClient
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddProtectedBrowserStorage();
+            services.AddBlazoredLocalStorage();
 
             services.Configure<ConduitClientSettings>(Configuration.GetSection(nameof(ConduitClientSettings)));
 
