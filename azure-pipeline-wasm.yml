@@ -10,7 +10,7 @@ variables:
 steps:
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'build $(buildConfiguration)'
+    command: 'build --configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   inputs:
