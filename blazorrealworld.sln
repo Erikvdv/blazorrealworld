@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Applicat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLib", "src\Clients\SharedLib\SharedLib.csproj", "{7EAA65EC-2FEE-4055-A4B3-8E613E8432BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasmClient", "src\Clients\WasmClient\WasmClient.csproj", "{F6630526-B1F9-4833-83F3-257B65BAED5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,9 +35,14 @@ Global
 		{7EAA65EC-2FEE-4055-A4B3-8E613E8432BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EAA65EC-2FEE-4055-A4B3-8E613E8432BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EAA65EC-2FEE-4055-A4B3-8E613E8432BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6630526-B1F9-4833-83F3-257B65BAED5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6630526-B1F9-4833-83F3-257B65BAED5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6630526-B1F9-4833-83F3-257B65BAED5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6630526-B1F9-4833-83F3-257B65BAED5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C67F3C3-ABF1-4EEA-BF55-CA42E48DD70F} = {14B60348-6596-4BE7-B71C-F629BA88A1A0}
 		{7EAA65EC-2FEE-4055-A4B3-8E613E8432BA} = {14B60348-6596-4BE7-B71C-F629BA88A1A0}
+		{F6630526-B1F9-4833-83F3-257B65BAED5A} = {14B60348-6596-4BE7-B71C-F629BA88A1A0}
 	EndGlobalSection
 EndGlobal

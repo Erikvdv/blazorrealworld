@@ -25,7 +25,6 @@ namespace ServerClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddProtectedBrowserStorage();
             services.AddBlazoredLocalStorage();
 
             services.Configure<ConduitClientSettings>(Configuration.GetSection(nameof(ConduitClientSettings)));
