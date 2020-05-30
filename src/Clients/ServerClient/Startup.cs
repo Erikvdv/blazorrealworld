@@ -33,6 +33,7 @@ namespace ServerClient
             services.AddScoped<IArticlesInteractor, ArticlesInteractor>();
             services.AddScoped<IUserInteractor, UserInteractor>();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            services.AddResponseCompression();
 
         }
 
@@ -49,6 +50,8 @@ namespace ServerClient
             }
 
             app.UseHttpsRedirection();
+
+            app.UseResponseCompression();
             app.UseStaticFiles();
 
             app.UseRouting();
