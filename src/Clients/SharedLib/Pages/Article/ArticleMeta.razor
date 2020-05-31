@@ -17,9 +17,7 @@
             <a class="btn btn-sm btn-outline-secondary" href="/editor/@Article.Slug">
                 <i class="ion-edit"></i> Edit Article
             </a>
-            <button @click="${() => {
-          deleteArticle(articleSlug);
-        }}"
+            <button @onclick="() => OnDeleteArticle.InvokeAsync(Article.Slug)"
                     class="btn btn-sm btn-outline-danger">
                 <i class="ion-trash-a"></i> Delete Article
             </button>
@@ -28,22 +26,14 @@
     else
     {
         <span>
-            <button class="btn btn-sm action-btn @Article.Author.Following
-        ? 'btn-secondary'
-        : 'btn-outline-secondary'}"
-                    @click=${() =>
-                toggleFavorite()}
-                >
+            <button class="btn btn-sm action-btn @(Article.Author.Following? "btn-secondary" : "btn-outline-secondary")"
+                    @onclick="() => OnToggleAuthorFavorite.InvokeAsync(Article.Author.Username)">
                 <i class="ion-plus-round"></i>
                 &nbsp; @(@Article.Author.Following ? "Unfollow" : "Follow")
                 @Article.Author.Username
             </button>
-            <button class="btn btn-sm ${article.favorited
-        ? 'btn-primary'
-        : 'btn-outline-primary'}"
-                    @click=${() =>
-                toggleFavorite()}
-                >
+            <button class="btn btn-sm @(@Article.Favorited ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="() => OnToggleAuthorFavorite.InvokeAsync(Article.Author.Username)">
                 <i class="ion-heart"></i> @(@Article.Favorited ? "Unfavorite" : "Favorite")
                 Article
                 <span class="counter">(@Article.FavoritesCount)</span>
@@ -60,5 +50,11 @@
 
     [Parameter]
     public bool IsOwner { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnDeleteArticle { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnToggleAuthorFavorite { get; set; }
 
 }

@@ -59,7 +59,6 @@
         _authenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
         var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         _loggedinUser = userState.User.Identity.Name;
-
     }
 
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)

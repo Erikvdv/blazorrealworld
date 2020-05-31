@@ -70,9 +70,9 @@
     public string Slug { get; set; }
 
     private bool _articleIsLoaded = false;
-    private Application.Models.Article _article;
+    private Application.Models.Article? _article;
     private MarkupString _articleBody;
-    private string _loggedinUser;
+    private string? _loggedinUser;
 
 
     protected override async Task OnInitializedAsync()
@@ -85,5 +85,6 @@
         _articleIsLoaded = true;
 
     }
+
 
 }
