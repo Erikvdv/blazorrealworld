@@ -7,7 +7,7 @@ namespace Application.Models
 
         public string Body { get; set; }
 
-        public Author Author { get; set; }
+        public Profile Author { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

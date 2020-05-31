@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Application.Models
 {
-    public class Author
+    public class Profile
     {
         public string Username { get; set; }
         public string Bio { get; set; }

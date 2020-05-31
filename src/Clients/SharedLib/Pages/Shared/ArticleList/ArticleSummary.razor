@@ -21,18 +21,19 @@
             </button>
         </div>
     </div>
+    <NavLink href=@($"/article/{Article.Slug}") class="preview-link">
+        <h1>@Article.Title</h1>
+        <p>@Article.Description</p>
+        <span>Read more...</span>
+        <ul class="tag-list">
+            @foreach (string tag in Article.TagList)
+            {
+                <li class="tag-default tag-pill tag-outline">@tag</li>
+            }
+        </ul>
+    </NavLink>
 </div>
-<a href="/article/@Article.Slug" class="preview-link">
-    <h1>@Article.Title</h1>
-    <p>@Article.Description</p>
-    <span>Read more...</span>
-    <ul class="tag-list">
-        @foreach (string tag in Article.TagList)
-        {
-            <li class="tag-default tag-pill tag-outline">@tag</li>
-        }
-    </ul>
-</a>
+
 
 @code {
     [Parameter]

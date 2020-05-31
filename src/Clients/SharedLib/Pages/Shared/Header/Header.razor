@@ -24,7 +24,7 @@
                     </NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink href="/profile" class="nav-link">@_loggedinUser</NavLink>
+                    <NavLink href=@($"/profile/{_loggedinUser}") class="nav-link">@_loggedinUser</NavLink>
                 </li>
             </ul>
         }

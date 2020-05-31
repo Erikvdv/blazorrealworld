@@ -102,6 +102,45 @@ namespace Infrastructure.Clients
             return response.Tags;
         }
 
+        public async Task<Profile> GetProfileAsync(string username, string? token, CancellationToken cancellationToken = default)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/profiles/{username}", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
+
+            var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
+            return response.Profile;
+        }
+
+        public async Task<Profile> FollowProfileAsync(string username, string? token, CancellationToken cancellationToken = default)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/profiles/{username}/follow", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
+
+            var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
+            return response.Profile;
+        }
+
+        public async Task<Profile> UnFollowProfileAsync(string username, string? token, CancellationToken cancellationToken = default)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, new Uri($"api/profiles/{username}/follow", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
+
+            var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
+            return response.Profile;
+        }
+
         public async Task<User> LoginAsync(Login login, CancellationToken cancellationToken = default)
         {
             var loginRequest = new LoginRequest { User = login };
@@ -161,6 +200,7 @@ namespace Infrastructure.Clients
 
             return String.Join("&", properties.ToArray());
         }
+
 
     }
 }

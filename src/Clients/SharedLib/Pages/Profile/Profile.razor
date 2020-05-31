@@ -1,0 +1,136 @@
+﻿@using Application.Services
+@using Application.Models
+@using SharedLib.Extensions
+
+@inject NavigationManager _navigationManager
+@inject IConduitApiService _apiService
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
+
+@page "/profile/{UserId}"
+
+@if (_isLoading)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <div class="profile-page">
+        <div class="user-info">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 offset-md-1">
+                        @if (_updateErrors != null)
+                        {
+                            <ListErrors ErrorList="_updateErrors"></ListErrors>
+                        }
+                        <img src="@_profile.Image" class="user-img" />
+                        <h4>@_profile.Username</h4>
+                        <p>@_profile.Bio</p>
+
+                        <button hidden=@(_profile.Username == _loggedinUser)
+                                disabled=@_followUpdateIsLoading
+                                class="btn btn-sm action-btn @(_profile.Following ? "btn-outline-secondary" : "btn-secondary")"
+                                @onclick="() => ToggleFollowing()">
+                            <i class="ion-plus-round"></i>
+                            &nbsp; @(_profile.Following ? "Unfollow" : "Follow") @_profile.Username
+                        </button>
+                        <a href="/settings"
+                           hidden=@(_profile.Username != _loggedinUser)
+                           class="btn btn-sm btn-outline-secondary action-btn">
+                            <i class="ion-gear-a"></i> Edit Profile Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-10 offset-md-1">
+                    <div class="articles-toggle">
+                        <ul class="nav nav-pills outline-active">
+                            <li class="nav-item" @onclick=@(() => SelectTab(Tabs.My))>
+                                <a class=@(_selectedTab == Tabs.My ? "nav-link active" : "nav-link")>
+                                    My Posts
+                                </a>
+                            </li>
+                            <li class="nav-item" @onclick=@(() => SelectTab(Tabs.Favorited))>
+                                <a class=@(_selectedTab == Tabs.Favorited ? "nav-link active" : "nav-link")>
+                                    Favorited Posts
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ArticleList ArticleListFilter="_articleListFilter" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public string UserId { get; set; }
+
+    private Application.Models.Profile? _profile;
+    private Dictionary<string, string[]>? _updateErrors;
+    private bool _isLoading = true;
+    private bool _followUpdateIsLoading = false;
+    private Tabs _selectedTab = Tabs.My;
+    private string? _loggedinUser;
+    public ArticleListFilter _articleListFilter;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+
+        _loggedinUser = userState.User.Identity.Name;
+        _profile = await _apiService.GetProfileAsync(UserId, _authenticationStateProvider.GetToken());
+        _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global, Author = UserId };
+        _isLoading = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global, Author = UserId };
+        _profile = await _apiService.GetProfileAsync(UserId, _authenticationStateProvider.GetToken());
+    }
+
+    private async Task ToggleFollowing()
+    {
+        _followUpdateIsLoading = true;
+        if (_profile.Following)
+        {
+
+            _profile = await _apiService.UnFollowProfileAsync(UserId, _authenticationStateProvider.GetToken());
+
+        }
+        else
+        {
+            _profile = await _apiService.FollowProfileAsync(UserId, _authenticationStateProvider.GetToken());
+        }
+        _followUpdateIsLoading = false;
+    }
+
+    private void SelectTab(Tabs tab)
+    {
+        var filter = new ArticleListFilter { FeedType = FeedType.Global, Author = UserId };
+        if (tab == Tabs.Favorited)
+        {
+            _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global, Favorited = UserId };
+        }
+        else
+        {
+            _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global, Author = UserId };
+        }
+
+        _selectedTab = tab;
+
+    }
+
+    private enum Tabs
+    {
+        My,
+        Favorited
+    }
+}

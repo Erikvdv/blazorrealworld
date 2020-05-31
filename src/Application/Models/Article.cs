@@ -16,7 +16,7 @@ namespace Application.Models
 
         public bool Favorited { get; set; }
         public int FavoritesCount { get; set; }
-        public Author Author { get; set; }
+        public Profile Author { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
