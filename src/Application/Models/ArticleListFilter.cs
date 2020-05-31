@@ -4,8 +4,14 @@ using System.Text.Json;
 
 namespace Application.Models
 {
+    public enum FeedType
+    {
+        Global, Private
+    }
+
     public class ArticleListFilter : ICloneable
     {
+        public FeedType FeedType { get; set; }
         public string? Tag { get; set; }
         public string? Author { get; set; }
         public string? Favorited { get; set; }

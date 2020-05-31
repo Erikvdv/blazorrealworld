@@ -1,34 +1,54 @@
 ﻿@using Application.Services
 @using Application.Models
+@using SharedLib.Extensions
 
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
 @inject IConduitApiService _apiService
-
+@inject NavigationManager _navigationManager
 
 @page "/"
 
 
 <div class="home-page">
-
-    <AuthorizeView>
-        <Authorized>
-        </Authorized>
-        <NotAuthorized>
-            <div class="banner">
-                <div class="container">
-                    <h1 class="logo-font">
-                        @_appName
-                    </h1>
-                    <p>A place to share your <i>Blazor Server</i> knowledge.</p>
-                </div>
+    @if (!_isLoggedIn)
+    {
+        <div class="banner">
+            <div class="container">
+                <h1 class="logo-font">
+                    @_appName
+                </h1>
+                <p>A place to share your <i>Blazor Server</i> knowledge.</p>
             </div>
-        </NotAuthorized>
-    </AuthorizeView>
-
+        </div>
+    }
 
     <div class="container page">
         <div class="row">
             <div class="col-md-9">
-                <HomeFeedNavigation ActiveTab="@_activeTab" ActiveTagName="@_selectedTag" OnSelectedTab="SetTab" />
+                <div class="feed-toggle">
+                    <ul class="nav nav-pills outline-active">
+                        <li class="nav-item" @onclick="@(_ => SetTab("feed"))">
+                            <a href=""
+                               class=@(_activeTab == "feed" ? "nav-link active" : "nav-link" )>
+                                Your Feed
+                            </a>
+                        </li>
+                        <li class="nav-item" @onclick='(() => SetTab("all"))'>
+                            <a href=""
+                               class="@(_activeTab == "all" ? "nav-link active" : "nav-link" )">
+                                Global Feed
+                            </a>
+                        </li>
+                        @if (!string.IsNullOrEmpty(_selectedTag))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active">
+                                    <i class="ion-pound"></i> @_selectedTag
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
                 <ArticleList ArticleListFilter="_articleListFilter" />
             </div>
             <div class="col-md-3">
@@ -39,7 +59,7 @@
                         <div class="tag-list">
                             @foreach (string tag in _taglist)
                             {
-                                <a class="tag-default tag-pill" @onclick="_ => SelectedTag(tag)"> @tag </a>
+                                <a class="tag-default tag-pill" @onclick="_ => SelectedTag(tag)">@tag</a>
                             }
                         </div>
                     }
@@ -58,36 +78,74 @@
 
 @code {
     private string _appName = "Conduit";
-    private bool _isLoggedIn = false;
     private string _activeTab = "all";
+
     private string[] _taglist;
+
 
     private string? _selectedTag;
 
     private bool _tagsLoaded = false;
+    private bool _isLoggedIn = false;
 
     public ArticleListFilter _articleListFilter = new ArticleListFilter();
-
 
     protected override async Task OnInitializedAsync()
     {
         _taglist = await _apiService.GetTagListAsync();
         _tagsLoaded = true;
+        _authenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        _isLoggedIn = userState.User.Identity.Name != null;
+        SetFeed();
+
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var state = await task;
+        _isLoggedIn = state.User.Identity.Name != null;
+        SetFeed();
+
+    }
+
+
+    private void SetFeed()
+    {
+        if (_isLoggedIn) { SetPrivateFeed(); } else { SetGlobalFeed(); }
     }
 
     private void SelectedTag(string tag)
     {
+        _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global, Tag = tag, Offset = 0 };
         _selectedTag = tag;
         _activeTab = "";
-        _articleListFilter.Offset = 0;
-        _articleListFilter.Tag = tag;
     }
 
     private void SetTab(string tab)
     {
         _activeTab = tab;
         _selectedTag = null;
-        _articleListFilter = new ArticleListFilter();
+        if (tab == "feed") { SetPrivateFeed(); } else { SetGlobalFeed(); }
+    }
+
+    private void SetPrivateFeed()
+    {
+        if (!_isLoggedIn)
+        {
+            _navigationManager.NavigateTo("/login");
+            return;
+        }
+
+        _activeTab = "feed";
+        _articleListFilter = new ArticleListFilter { FeedType = FeedType.Private };
+
+    }
+
+    private void SetGlobalFeed()
+    {
+        _activeTab = "all";
+        _articleListFilter = new ArticleListFilter { FeedType = FeedType.Global };
     }
 
 }

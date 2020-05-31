@@ -50,7 +50,14 @@ else
     {
         _isLoading = true;
         _activePage = 1;
-        _articleList = await _apiService.GetArticleListAsync(filter, _authenticationStateProvider.GetToken());
+        if (filter.FeedType == FeedType.Global)
+        {
+            _articleList = await _apiService.GetArticleListAsync(filter, _authenticationStateProvider.GetToken());
+        }
+        else
+        {
+            _articleList = await _apiService.GetArticleFeedAsync(filter, _authenticationStateProvider.GetToken());
+        }
 
         _isLoading = false;
     }
