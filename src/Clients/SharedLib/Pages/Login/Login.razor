@@ -4,7 +4,7 @@
 
 @inject NavigationManager _navigationManager
 @inject IUserInteractor _userInteractor
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
 
 @page "/login"
 
@@ -77,9 +77,9 @@
     {
         try
         {
-            var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
+
             var user = await _userInteractor.LoginAsync(_login);
-            _authProvider!.SignInUser(user);
+            _authenticationStateProvider!.SignInUser(user);
             await _browserStateProvider.SaveTokenAsync(user.Token);
             _navigationManager.NavigateTo("/");
 

@@ -1,44 +1,47 @@
-﻿<nav class="navbar navbar-light">
+﻿@using SharedLib.Extensions
+
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
+
+<nav class="navbar navbar-light">
     <div class="container">
         <NavLink href="/" class="navbar-brand">
             @Title
         </NavLink>
-        <AuthorizeView>
-            <Authorized>
-                <ul class="nav navbar-nav pull-xs-right">
-                    <li class="nav-item">
-                        <NavLink href="/" class="nav-link">Home</NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink href="/editor" class="nav-link">
-                            <i class="ion-compose"></i>&nbsp;New Article
-                        </NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink href="/settings/" class="nav-link">
-                            <i class="ion-gear-a"></i>&nbsp;Settings
-                        </NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink href="/profile" class="nav-link">@context.User.Identity.Name</NavLink>
-                    </li>
-                </ul>
-            </Authorized>
-            <NotAuthorized>
-                <ul class="nav navbar-nav pull-xs-right">
-                    <li class="nav-item">
-                        <NavLink href="/" class="nav-link">Home</NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink href="/login" class="nav-link">Sign in</NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink href="/register" class="nav-link">Sign up</NavLink>
-                    </li>
-                </ul>
-            </NotAuthorized>
-        </AuthorizeView>
-
+        @if (_loggedinUser != null)
+        {
+            <ul class="nav navbar-nav pull-xs-right">
+                <li class="nav-item">
+                    <NavLink href="/" class="nav-link">Home</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/editor" class="nav-link">
+                        <i class="ion-compose"></i>&nbsp;New Article
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/settings/" class="nav-link">
+                        <i class="ion-gear-a"></i>&nbsp;Settings
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/profile" class="nav-link">@_loggedinUser</NavLink>
+                </li>
+            </ul>
+        }
+        else
+        {
+            <ul class="nav navbar-nav pull-xs-right">
+                <li class="nav-item">
+                    <NavLink href="/" class="nav-link">Home</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/login" class="nav-link">Sign in</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/register" class="nav-link">Sign up</NavLink>
+                </li>
+            </ul>
+        }
     </div>
 </nav>
 
@@ -48,5 +51,22 @@
 
     [Parameter]
     public string? User { get; set; }
+
+    private string? _loggedinUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _authenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        _loggedinUser = userState.User.Identity.Name;
+
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var state = await task;
+        _loggedinUser = state.User.Identity.Name;
+        this.StateHasChanged();
+    }
 
 }

@@ -32,6 +32,12 @@ namespace SharedLib.Extensions
             NotifyAuthenticationStateChanged(authState);
         }
 
+        public string GetToken()
+        {
+            Claim claim = _claimsPrincipal.FindFirst("Token");
+            return claim?.Value;
+        }
+
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             if (_claimsPrincipal == null)

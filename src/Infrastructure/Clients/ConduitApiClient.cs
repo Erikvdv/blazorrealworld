@@ -40,11 +40,15 @@ namespace Infrastructure.Clients
             _httpClient.BaseAddress = new Uri(_settings.BaseAddress);
         }
 
-        public Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, CancellationToken cancellationToken = default)
+        public Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, string? token, CancellationToken cancellationToken = default)
         {
             var querystring = GetQueryString(articleListFilter);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles?{querystring}", UriKind.Relative));
             httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
 
             return HandleRequest<ArticleList>(httpRequest, cancellationToken);
         }
@@ -60,11 +64,15 @@ namespace Infrastructure.Clients
             return HandleRequest<ArticleList>(httpRequest, cancellationToken);
         }
 
-        public async Task<Article> GetArticleAsync(string slug, CancellationToken cancellationToken = default)
+        public async Task<Article> GetArticleAsync(string slug, string? token, CancellationToken cancellationToken = default)
         {
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/{slug}", UriKind.Relative));
             httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
 
             var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
             return response.Article;

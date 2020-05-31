@@ -80,13 +80,10 @@
         var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         _loggedinUser = userState.User.Identity.Name;
 
-        _article = await _articlesInteractor.GetArticleAsync(Slug);
+        _article = await _articlesInteractor.GetArticleAsync(Slug, _authenticationStateProvider.GetToken());
         _articleBody = (MarkupString)CommonMark.CommonMarkConverter.Convert(_article.Body);
         _articleIsLoaded = true;
 
-
     }
-
-
 
 }
