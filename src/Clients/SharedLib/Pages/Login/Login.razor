@@ -1,9 +1,9 @@
-﻿@using Application.Interactors
+﻿@using Application.Services
 @using Application.Exceptions
 @using SharedLib.Extensions
 
 @inject NavigationManager _navigationManager
-@inject IUserInteractor _userInteractor
+@inject IConduitApiService _apiService
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
 
 @page "/login"
@@ -78,7 +78,7 @@
         try
         {
 
-            var user = await _userInteractor.LoginAsync(_login);
+            var user = await _apiService.LoginAsync(_login);
             _authenticationStateProvider!.SignInUser(user);
             await _browserStateProvider.SaveTokenAsync(user.Token);
             _navigationManager.NavigateTo("/");

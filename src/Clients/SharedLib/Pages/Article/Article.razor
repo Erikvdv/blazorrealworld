@@ -1,9 +1,9 @@
-﻿@using Application.Interactors
+﻿@using Application.Services
 @using Application.Models
 @using SharedLib.Extensions
 
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
-@inject IArticlesInteractor _articlesInteractor
+@inject IConduitApiService _apiService
 
 
 @page "/article/{Slug}"
@@ -40,21 +40,64 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-8 offset-md-2">
-                    ${PostCommentBoxTemplate(
-                    addCommentStatus,
-                    newCommentUpdated,
-                    submitComment,
-                    newComment,
-                    user,
-                    undefined,
-                    )}
-                    ${comments.map((comment: Comment) =>
-                    CommentTemplate(
-                    comment,
-                    comment.author.username === (user ? user.username : undefined),
-                    deleteComment,
-                    ),
-                    )}
+                    @if (_loggedinUser != null)
+                    {
+                        <div>
+                            @if (_addCommentErrors != null)
+                            {
+                                <ListErrors ErrorList=_addCommentErrors />
+                            }
+
+                            <form class="card comment-form">
+                                <fieldset>
+                                    <div class="card-block">
+                                        <textarea class="form-control"
+                                                  placeholder="Write a comment..."
+                                                  rows="3">
+                                        </textarea>
+                                    </div>
+                                    <div class="card-footer">
+
+                                        <button class="btn btn-sm btn-primary"
+                                                type="submit">
+                                            Post Comment
+                                        </button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <NavLink href="/login"> Sign in </NavLink> or <NavLink href="/register">sign up</NavLink> to add
+                            comments on this article.
+                        </div>
+                    }
+                    @foreach (Comment comment in _comments)
+                    {
+                        <div class="card">
+                            <div class="card-block">
+                                <p class="card-text">
+                                    @((MarkupString)CommonMark.CommonMarkConverter.Convert(comment.Body))
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <NavLink class="comment-author" href="@($"/editor/{comment.Author.Username}")">
+                                    <img src="@comment.Author.Image" class="comment-author-img" />
+                                </NavLink>&nbsp;
+                                <NavLink class="comment-author" href="@($"/editor/{comment.Author.Username}")">
+                                    @comment.Author.Username
+                                </NavLink>
+                                <span class="date-posted">@comment.CreatedAt</span>
+                                <span class="mod-options" hidden=@(comment.Author.Username != _loggedinUser)>
+                                    <i class="ion-trash-a"
+                                       @onclick="() => DeleteComment(comment.Id)"></i>
+                                </span>
+                            </div>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>
@@ -72,7 +115,9 @@
     private bool _articleIsLoaded = false;
     private Application.Models.Article? _article;
     private MarkupString _articleBody;
+    private List<Comment>? _comments;
     private string? _loggedinUser;
+    private Dictionary<string, string[]> _addCommentErrors;
 
 
     protected override async Task OnInitializedAsync()
@@ -80,10 +125,16 @@
         var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         _loggedinUser = userState.User.Identity.Name;
 
-        _article = await _articlesInteractor.GetArticleAsync(Slug, _authenticationStateProvider.GetToken());
+        _article = await _apiService.GetArticleAsync(Slug, _authenticationStateProvider.GetToken());
+        _comments = await _apiService.GetArticleCommentsAsync(Slug, _authenticationStateProvider.GetToken());
         _articleBody = (MarkupString)CommonMark.CommonMarkConverter.Convert(_article.Body);
         _articleIsLoaded = true;
 
+    }
+
+    private void DeleteComment(int id)
+    {
+        throw new NotImplementedException();
     }
 
 

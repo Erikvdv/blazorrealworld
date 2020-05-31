@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -78,6 +79,20 @@ namespace Infrastructure.Clients
             return response.Article;
         }
 
+        public async Task<List<Comment>> GetArticleCommentsAsync(string slug, string? token, CancellationToken cancellationToken = default)
+        {
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/{slug}/comments", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+            if (token != null)
+            {
+                httpRequest.Headers.Add("Authorization", $"Token {token}");
+            }
+
+            var response = await HandleRequest<CommentsResponse>(httpRequest, cancellationToken);
+            return response.Comments;
+        }
+
         public async Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default)
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/tags", UriKind.Relative));
@@ -146,7 +161,6 @@ namespace Infrastructure.Clients
 
             return String.Join("&", properties.ToArray());
         }
-
 
     }
 }

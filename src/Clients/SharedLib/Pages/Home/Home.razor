@@ -1,7 +1,7 @@
-﻿@using Application.Interactors
+﻿@using Application.Services
 @using Application.Models
 
-@inject IArticlesInteractor _articlesInteractor
+@inject IConduitApiService _apiService
 
 
 @page "/"
@@ -71,7 +71,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _taglist = await _articlesInteractor.GetTagListAsync();
+        _taglist = await _apiService.GetTagListAsync();
         _tagsLoaded = true;
     }
 

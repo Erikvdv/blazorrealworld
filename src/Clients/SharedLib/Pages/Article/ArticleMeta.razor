@@ -1,11 +1,11 @@
 ﻿<div class="article-meta">
-    <a href="Article.Author.Username">
+    <NavLink href="Article.Author.Username">
         <img src="@Article.Author.Image" alt="@Article.Author.Username" />
-    </a>
+    </NavLink>
     <div class="info">
-        <a href="@Article.Author.Username" class="author">
+        <NavLink href="@Article.Author.Username" class="author">
             @Article.Author.Username
-        </a>
+        </NavLink>
         <span class="date">
             @Article.CreatedAt
         </span>
@@ -14,9 +14,9 @@
     @if (IsOwner)
     {
         <span>
-            <a class="btn btn-sm btn-outline-secondary" href="/editor/@Article.Slug">
+            <NavLink class="btn btn-sm btn-outline-secondary" href="@($"/editor/{Article.Slug}")">
                 <i class="ion-edit"></i> Edit Article
-            </a>
+            </NavLink>
             <button @onclick="() => OnDeleteArticle.InvokeAsync(Article.Slug)"
                     class="btn btn-sm btn-outline-danger">
                 <i class="ion-trash-a"></i> Delete Article

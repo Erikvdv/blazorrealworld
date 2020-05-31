@@ -1,9 +1,9 @@
-﻿@using Application.Interactors
+﻿@using Application.Services
 @using Application.Models
 @using SharedLib.Extensions
 @using Infrastructure.Utils
 
-@inject IArticlesInteractor _articlesInteractor
+@inject IConduitApiService _apiService
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
 
 @if (_isLoading)
@@ -50,7 +50,7 @@ else
     {
         _isLoading = true;
         _activePage = 1;
-        _articleList = await _articlesInteractor.GetArticleListAsync(filter, _authenticationStateProvider.GetToken());
+        _articleList = await _apiService.GetArticleListAsync(filter, _authenticationStateProvider.GetToken());
 
         _isLoading = false;
     }
@@ -59,7 +59,7 @@ else
     {
         _isLoading = true;
         ArticleListFilter!.Offset = page * _pageSize;
-        _articleList = await _articlesInteractor.GetArticleListAsync(ArticleListFilter, _authenticationStateProvider.GetToken());
+        _articleList = await _apiService.GetArticleListAsync(ArticleListFilter, _authenticationStateProvider.GetToken());
         _activePage = page;
         _isLoading = false;
     }

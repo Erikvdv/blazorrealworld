@@ -1,12 +1,11 @@
 ﻿@using SharedLib.Extensions
-@using Application.Interactors
+@using Application.Services
 @using Application.Models;
-@using Microsoft.AspNetCore.Components.Authorization
 
 
 @inherits LayoutComponentBase
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
-@inject IUserInteractor _userInteractor
+@inject IConduitApiService _apiService
 
 <Header Title="Conduit" />
 
@@ -26,7 +25,7 @@
         var token = await _browserStateProvider!.GetTokenAsync();
         if (string.IsNullOrEmpty(token)) return;
 
-        _user = await _userInteractor!.LoginWithTokenAsync(token);
+        _user = await _apiService!.LoginWithTokenAsync(token);
         _authenticationStateProvider!.SignInUser(_user);
 
     }

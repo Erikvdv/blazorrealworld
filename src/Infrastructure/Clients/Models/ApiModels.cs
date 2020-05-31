@@ -24,6 +24,11 @@ namespace Infrastructure.Clients.Models
         public Article? Article { get; set; }
     }
 
+    public class CommentsResponse
+    {
+        public List<Comment>? Comments { get; set; }
+    }
+
     public class ErrorResponse
     {
         public Dictionary<string, string[]>? Errors { get; set; }
