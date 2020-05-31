@@ -5,7 +5,7 @@
 
 
 @inherits LayoutComponentBase
-@inject AuthenticationStateProvider _authenticationStateProvider
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
 @inject IUserInteractor _userInteractor
 
 <Header Title="Conduit" />
@@ -23,12 +23,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var _authProvider = _authenticationStateProvider as CustomAuthenticationStateProvider;
         var token = await _browserStateProvider!.GetTokenAsync();
         if (string.IsNullOrEmpty(token)) return;
 
         _user = await _userInteractor!.LoginWithTokenAsync(token);
-        _authProvider!.SignInUser(_user);
+        _authenticationStateProvider!.SignInUser(_user);
 
     }
 

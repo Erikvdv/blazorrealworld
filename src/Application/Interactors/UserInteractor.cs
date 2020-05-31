@@ -1,16 +1,16 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Application.Clients;
 using Application.Models;
+using Application.Services;
 
 namespace Application.Interactors
 {
     public class UserInteractor : IUserInteractor
     {
-        private readonly IConduitClient _conduitClient;
+        private readonly IConduitApiService _conduitClient;
         private User? _user;
 
-        public UserInteractor(IConduitClient conduitClient)
+        public UserInteractor(IConduitApiService conduitClient)
         {
             _conduitClient = conduitClient ?? throw new System.ArgumentNullException(nameof(conduitClient));
         }

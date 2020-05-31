@@ -1,7 +1,7 @@
 ﻿@using SharedLib.Extensions
 
 @inject NavigationManager _navigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
 
 
 <div class="feed-toggle">
@@ -43,8 +43,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var _authProvider = AuthenticationStateProvider as CustomAuthenticationStateProvider;
-        var authState = await _authProvider!.GetAuthenticationStateAsync();
+        var authState = await _authenticationStateProvider!.GetAuthenticationStateAsync();
         _isLoggedIn = authState.User.Identity.IsAuthenticated;
     }
 

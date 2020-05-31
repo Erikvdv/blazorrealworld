@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Clients;
+
 using Application.Models;
+using Application.Services;
 
 namespace Application.Interactors
 {
     public class ArticlesInteractor : IArticlesInteractor
     {
-        private readonly IConduitClient _conduitClient;
+        private readonly IConduitApiService _conduitClient;
 
-        public ArticlesInteractor(IConduitClient conduitClient)
+        public ArticlesInteractor(IConduitApiService conduitClient)
         {
             _conduitClient = conduitClient;
+        }
+
+        public Task<Article> GetArticleAsync(string slug, CancellationToken cancellationToken = default)
+        {
+            return _conduitClient.GetArticleAsync(slug, cancellationToken);
         }
 
         public async Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, CancellationToken cancellationToken = default)

@@ -1,34 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Application.Clients;
 using Application.Exceptions;
 using Application.Models;
+using Application.Services;
 using Infrastructure.Clients.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Clients
 {
-    public class ConduitClient : IConduitClient
+    public class ConduitApiClient : IConduitApiService
     {
         private readonly HttpClient _httpClient;
         private readonly ConduitClientSettings _settings;
-        private readonly ILogger<ConduitClient> _logger;
+        private readonly ILogger<ConduitApiClient> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public ConduitClient(
+        public ConduitApiClient(
             HttpClient httpClient,
             IOptions<ConduitClientSettings> settings,
-            ILogger<ConduitClient> logger)
+            ILogger<ConduitApiClient> logger)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _settings = settings.Value ?? throw new ArgumentNullException(nameof(settings));
@@ -60,6 +58,16 @@ namespace Infrastructure.Clients
 
 
             return HandleRequest<ArticleList>(httpRequest, cancellationToken);
+        }
+
+        public async Task<Article> GetArticleAsync(string slug, CancellationToken cancellationToken = default)
+        {
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/{slug}", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+
+            var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
+            return response.Article;
         }
 
         public async Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default)

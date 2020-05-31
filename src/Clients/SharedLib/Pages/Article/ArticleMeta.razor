@@ -1,0 +1,64 @@
+﻿<div class="article-meta">
+    <a href="Article.Author.Username">
+        <img src="@Article.Author.Image" alt="@Article.Author.Username" />
+    </a>
+    <div class="info">
+        <a href="@Article.Author.Username" class="author">
+            @Article.Author.Username
+        </a>
+        <span class="date">
+            @Article.CreatedAt
+        </span>
+    </div>
+
+    @if (IsOwner)
+    {
+        <span>
+            <a class="btn btn-sm btn-outline-secondary" href="/editor/@Article.Slug">
+                <i class="ion-edit"></i> Edit Article
+            </a>
+            <button @click="${() => {
+          deleteArticle(articleSlug);
+        }}"
+                    class="btn btn-sm btn-outline-danger">
+                <i class="ion-trash-a"></i> Delete Article
+            </button>
+        </span>
+    }
+    else
+    {
+        <span>
+            <button class="btn btn-sm action-btn @Article.Author.Following
+        ? 'btn-secondary'
+        : 'btn-outline-secondary'}"
+                    @click=${() =>
+                toggleFavorite()}
+                >
+                <i class="ion-plus-round"></i>
+                &nbsp; @(@Article.Author.Following ? "Unfollow" : "Follow")
+                @Article.Author.Username
+            </button>
+            <button class="btn btn-sm ${article.favorited
+        ? 'btn-primary'
+        : 'btn-outline-primary'}"
+                    @click=${() =>
+                toggleFavorite()}
+                >
+                <i class="ion-heart"></i> @(@Article.Favorited ? "Unfavorite" : "Favorite")
+                Article
+                <span class="counter">(@Article.FavoritesCount)</span>
+            </button>
+        </span>
+    }
+
+
+</div>
+
+@code {
+    [Parameter]
+    public Application.Models.Article Article { get; set; }
+
+    [Parameter]
+    public bool IsOwner { get; set; }
+
+}

@@ -6,22 +6,27 @@ namespace Infrastructure.Clients.Models
 {
     public class GetTagsResponse
     {
-        public string[] Tags { get; set; }
+        public string[]? Tags { get; set; }
     }
 
     public class LoginRequest
     {
-        public Login User { get; set; }
+        public Login? User { get; set; }
     }
 
     public class LoginResponse
     {
-        public User User { get; set; }
+        public User? User { get; set; }
+    }
+
+    public class ArticleResponse
+    {
+        public Article? Article { get; set; }
     }
 
     public class ErrorResponse
     {
-        public Dictionary<string, string[]> Errors { get; set; }
+        public Dictionary<string, string[]>? Errors { get; set; }
     }
 
 }

@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Application.Interactors;
-using Application.Clients;
 using Infrastructure.Clients;
 using SharedLib.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
+using Application.Services;
 
 namespace ServerClient
 {
@@ -29,10 +29,10 @@ namespace ServerClient
 
             services.Configure<ConduitClientSettings>(Configuration.GetSection(nameof(ConduitClientSettings)));
 
-            services.AddHttpClient<IConduitClient, ConduitClient>();
+            services.AddHttpClient<IConduitApiService, ConduitApiClient>();
             services.AddScoped<IArticlesInteractor, ArticlesInteractor>();
             services.AddScoped<IUserInteractor, UserInteractor>();
-            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            services.AddScoped<CustomAuthenticationStateProvider>();
             services.AddResponseCompression();
 
         }

@@ -36,12 +36,12 @@
 
 @code {
     [Parameter]
-    public Article Article { get; set; }
+    public Application.Models.Article Article { get; set; }
 
     [Parameter]
     public EventCallback<FavoriteAction> ChangeFavoriteAction { get; set; }
 
-    private void ToggleFavorite(Article article)
+    private void ToggleFavorite(Application.Models.Article article)
     {
         var action = article.Favorited ? FavoriteAction.Unmark : FavoriteAction.Mark;
         this.ChangeFavoriteAction.InvokeAsync(action);

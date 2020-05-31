@@ -1,0 +1,92 @@
+﻿@using Application.Interactors
+@using Application.Models
+@using SharedLib.Extensions
+
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
+@inject IArticlesInteractor _articlesInteractor
+
+
+@page "/article/{Slug}"
+
+@if (_articleIsLoaded)
+{
+    <div class="article-page">
+        <div class="banner">
+            <div class="container">
+                <h1>@_article.Title</h1>
+
+                <ArticleMeta Article="_article" IsOwner="@(_loggedinUser == _article.Author.Username)"></ArticleMeta>
+            </div>
+        </div>
+        <div class="container page">
+            <div class="row article-content">
+                <div class="col-md-12">
+                    <div>
+                        @_articleBody
+                    </div>
+                    <ul class="tag-list">
+                        @foreach (string tag in _article.TagList)
+                        {
+                            <li class="tag-default tag-pill tag-outline">
+                                @tag
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <hr />
+            <div class="article-actions">
+                <ArticleMeta Article="_article" IsOwner="@(_loggedinUser == _article.Author.Username)"></ArticleMeta>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-8 offset-md-2">
+                    ${PostCommentBoxTemplate(
+                    addCommentStatus,
+                    newCommentUpdated,
+                    submitComment,
+                    newComment,
+                    user,
+                    undefined,
+                    )}
+                    ${comments.map((comment: Comment) =>
+                    CommentTemplate(
+                    comment,
+                    comment.author.username === (user ? user.username : undefined),
+                    deleteComment,
+                    ),
+                    )}
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@code {
+
+    [Parameter]
+    public string Slug { get; set; }
+
+    private bool _articleIsLoaded = false;
+    private Application.Models.Article _article;
+    private MarkupString _articleBody;
+    private string _loggedinUser;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        _loggedinUser = userState.User.Identity.Name;
+
+        _article = await _articlesInteractor.GetArticleAsync(Slug);
+        _articleBody = (MarkupString)CommonMark.CommonMarkConverter.Convert(_article.Body);
+        _articleIsLoaded = true;
+
+
+    }
+
+
+
+}
