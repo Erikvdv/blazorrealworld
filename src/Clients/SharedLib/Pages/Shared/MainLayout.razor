@@ -7,26 +7,41 @@
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
 @inject IConduitApiService _apiService
 
-<Header Title="Conduit" />
+@if (_isInitialised)
+{
+    <Header Title="Conduit" />
 
 
-@Body
+    @Body
 
-<Footer />
+    <Footer />
+}
+else
+{
+    <div>Loading...</div>
+}
+
 
 @code{
     [CascadingParameter]
     private BrowserStateProvider? _browserStateProvider { get; set; }
+
+    private bool _isInitialised = false;
 
     private User _user;
 
     protected override async Task OnInitializedAsync()
     {
         var token = await _browserStateProvider!.GetTokenAsync();
-        if (string.IsNullOrEmpty(token)) return;
+        if (string.IsNullOrEmpty(token))
+        {
+            _isInitialised = true;
+            return;
+        }
 
         _user = await _apiService!.LoginWithTokenAsync(token);
         _authenticationStateProvider!.SignInUser(_user);
+        _isInitialised = true;
 
     }
 

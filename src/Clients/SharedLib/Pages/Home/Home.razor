@@ -95,10 +95,13 @@
         _taglist = await _apiService.GetTagListAsync();
         _tagsLoaded = true;
         _authenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
-        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        var userState = _authenticationStateProvider.GetAuthenticationStateAsync().GetAwaiter().GetResult();
         _isLoggedIn = userState.User.Identity.Name != null;
         SetFeed();
-
     }
 
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
