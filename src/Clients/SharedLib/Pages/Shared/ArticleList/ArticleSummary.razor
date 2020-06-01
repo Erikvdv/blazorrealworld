@@ -2,9 +2,9 @@
 
 <div class="article-preview">
     <div class="article-meta">
-        <a href="/profile/@Article.Author.Username">
+        <NavLink href=@($"/profile/{Article.Author.Username}")>
             <img src=@Article.Author.Image alt=@Article.Author.Username />
-        </a>
+        </NavLink>
         <div class="info">
             <a class="author" href="/profile/@Article.Author.Username">
                 @Article.Author.Username
