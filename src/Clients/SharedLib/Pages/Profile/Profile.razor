@@ -34,11 +34,11 @@ else
                             <i class="ion-plus-round"></i>
                             &nbsp; @(_profile.Following ? "Unfollow" : "Follow") @_profile.Username
                         </button>
-                        <a href="/settings"
-                           hidden=@(_profile.Username != _loggedinUser)
-                           class="btn btn-sm btn-outline-secondary action-btn">
+                        <NavLink href="/settings"
+                                 hidden=@(_profile.Username != _loggedinUser)
+                                 class="btn btn-sm btn-outline-secondary action-btn">
                             <i class="ion-gear-a"></i> Edit Profile Settings
-                        </a>
+                        </NavLink>
                     </div>
                 </div>
             </div>
