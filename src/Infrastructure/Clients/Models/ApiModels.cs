@@ -19,9 +19,14 @@ namespace Infrastructure.Clients.Models
         public User? User { get; set; }
     }
 
-    public class ArticleResponse
+    public class ArticleObject
     {
         public Article? Article { get; set; }
+    }
+
+    public class NewArticleRequest
+    {
+        public NewArticle? Article { get; set; }
     }
 
     public class CommentsResponse

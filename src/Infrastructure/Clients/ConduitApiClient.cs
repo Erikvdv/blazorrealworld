@@ -75,7 +75,35 @@ namespace Infrastructure.Clients
                 httpRequest.Headers.Add("Authorization", $"Token {token}");
             }
 
-            var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
+            var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
+            return response.Article;
+        }
+
+        public async Task<Article> CreateArticleAsync(NewArticle article, string token, CancellationToken cancellationToken = default)
+        {
+            var body = new NewArticleRequest { Article = article };
+            var requestBody = JsonSerializer.Serialize(body, _jsonSerializerOptions);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/articles", UriKind.Relative))
+            {
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+            httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+            var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
+            return response.Article;
+        }
+
+        public async Task<Article> UpdateArticleAsync(Article article, string token, CancellationToken cancellationToken = default)
+        {
+            var body = new ArticleObject { Article = article };
+            var requestBody = JsonSerializer.Serialize(body, _jsonSerializerOptions);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, new Uri($"api/articles/{article.Slug}", UriKind.Relative))
+            {
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+            httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+            var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
             return response.Article;
         }
 
@@ -228,7 +256,6 @@ namespace Infrastructure.Clients
 
             return String.Join("&", properties.ToArray());
         }
-
 
     }
 }

@@ -1,0 +1,143 @@
+﻿@using Application.Services
+@using Application.Exceptions
+@using Application.Models;
+@using SharedLib.Extensions
+
+@inject NavigationManager _navigationManager
+@inject IConduitApiService _apiService
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
+
+@page "/editor"
+@page "/editor/{Slug}"
+
+@if (_isLoading)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <div class="editor-page">
+        <div class="container page">
+            <div class="row">
+
+                <div class="col-md-10 offset-md-1 col-xs-12">
+                    <ListErrors ErrorList=_errors />
+                    <EditForm Model="@_newArticle">
+                        <fieldset>
+                            <fieldset class="form-group">
+                                <InputText type="text" class="form-control form-control-lg" disabled="@_isUpdating" @bind-Value="@_newArticle.Title" placeholder="Article Title" />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <InputText type="text" class="form-control" disabled="@_isUpdating" @bind-Value="@_newArticle.Description" placeholder="What's this article about?" />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <InputTextArea class="form-control" rows="8" disabled="@_isUpdating" @bind-Value="@_newArticle.Body" placeholder="Write your article (in markdown)"></InputTextArea>
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <InputText type="text" class="form-control" placeholder="Enter tags" disabled="@_isUpdating" @bind-Value="@_tag" @onkeyup="@((KeyboardEventArgs __e) => AddTag(__e))" />
+                                <div class="tag-list">
+                                    @foreach (string tag in _newArticle.TagList)
+                                    {
+                                        <a class="tag-default tag-pill">
+                                            <i class="ion-close-round" @onclick="@(() => DeleteTag(tag))"></i>
+                                            @tag
+                                        </a>
+                                    }
+                                </div>
+                            </fieldset>
+                            <button class="btn btn-lg pull-xs-right btn-primary" disabled="@_isUpdating" type="button" @onclick="@(() => CreateArticle())">
+                                Publish Article
+                            </button>
+                        </fieldset>
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private NewArticle _newArticle;
+    private string _tag = "";
+    private bool _isLoading = true;
+    private bool _isUpdating = false;
+    private Application.Models.Article _article;
+    public Dictionary<string, string[]>
+    _errors
+    { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (string.IsNullOrEmpty(Slug))
+        {
+            _newArticle = new NewArticle();
+        }
+        else
+        {
+            _article = await _apiService.GetArticleAsync(Slug, _authenticationStateProvider.GetToken());
+            _newArticle = new NewArticle
+            {
+                Body = _article.Body,
+                Title = _article.Title,
+                Description = _article.Description,
+                TagList = new HashSet<string>
+                (_article.TagList)
+            };
+        }
+        _isLoading = false;
+    }
+
+    private async Task CreateArticle()
+    {
+        try
+        {
+            Application.Models.Article article;
+            _isUpdating = true;
+            if (_article == null)
+            {
+
+                article = await _apiService.CreateArticleAsync(_newArticle, _authenticationStateProvider.GetToken());
+            }
+            else
+            {
+                String[] stringArray = new String[_newArticle.TagList.Count];
+                _newArticle.TagList.CopyTo(stringArray);
+                _article.Body = _newArticle.Body;
+                _article.Description = _newArticle.Description;
+                _article.Title = _newArticle.Title;
+                _article.TagList = stringArray;
+                article = await _apiService.UpdateArticleAsync(_article, _authenticationStateProvider.GetToken());
+            }
+
+            _isUpdating = false;
+            _navigationManager.NavigateTo($"/article/{article.Slug}");
+        }
+        catch (ApiException ex)
+        {
+            _errors = ex.ErrorList;
+        }
+    }
+
+    private void AddTag(KeyboardEventArgs __e)
+    {
+        if (__e.Key == "Enter")
+        {
+            _newArticle.TagList.Add(_tag);
+            _tag = "";
+        }
+    }
+
+    private void DeleteTag(string tag)
+    {
+        _newArticle.TagList.Remove(tag);
+        _tag = "";
+
+    }
+
+}

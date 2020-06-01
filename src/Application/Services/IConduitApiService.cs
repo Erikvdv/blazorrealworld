@@ -10,6 +10,8 @@ namespace Application.Services
         Task<ArticleList> GetArticleListAsync(ArticleListFilter articleListFilter, string? token, CancellationToken cancellationToken = default);
         Task<ArticleList> GetArticleFeedAsync(ArticleListFilter articleListFilter, string token, CancellationToken cancellationToken = default);
         Task<Article> GetArticleAsync(string slug, string? token, CancellationToken cancellationToken = default);
+        Task<Article> CreateArticleAsync(NewArticle article, string token, CancellationToken cancellationToken = default);
+        Task<Article> UpdateArticleAsync(Article article, string token, CancellationToken cancellationToken = default);
         Task<List<Comment>> GetArticleCommentsAsync(string slug, string? token, CancellationToken cancellationToken = default);
         Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default);
 

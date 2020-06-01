@@ -16,9 +16,4 @@
         <ProjectReference Include="..\..\Application\Application.csproj" />
         <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Pages\Article\" />
-        <Folder Include="Pages\Profile\" />
-        <Folder Include="Pages\Settings\" />
-    </ItemGroup>
 </Project>
