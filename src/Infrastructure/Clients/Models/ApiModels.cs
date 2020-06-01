@@ -34,6 +34,16 @@ namespace Infrastructure.Clients.Models
         public Profile? Profile { get; set; }
     }
 
+    public class UserResponse
+    {
+        public User? User { get; set; }
+    }
+
+    public class UserUpdateRequest
+    {
+        public User? User { get; set; }
+    }
+
     public class ErrorResponse
     {
         public Dictionary<string, string[]>? Errors { get; set; }

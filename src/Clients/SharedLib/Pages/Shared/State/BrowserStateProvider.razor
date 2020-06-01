@@ -2,13 +2,13 @@
 
 @if (hasLoaded)
 {
-    <CascadingValue Value="@this">
-        @ChildContent
-    </CascadingValue>
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
 }
 else
 {
-    <p>Loading...</p>
+<p>Loading...</p>
 }
 
 @code {
@@ -22,17 +22,21 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        Token = await _localStorage.GetItemAsync<string>("token");
-        hasLoaded = true;
+        Token = await _localStorage.GetItemAsync<string>
+    ("token");
+    hasLoaded = true;
     }
 
     public async Task SaveTokenAsync(string token)
     {
-        await _localStorage.SetItemAsync("token", token);
+    await _localStorage.SetItemAsync("token", token);
     }
 
-    public async Task<string> GetTokenAsync()
-    {
-        return await _localStorage.GetItemAsync<string>("token") ?? "";
-    }
-}
+    public async Task<string>
+        GetTokenAsync()
+        {
+        return await _localStorage.GetItemAsync<string>
+            ("token") ?? "";
+            }
+
+            }

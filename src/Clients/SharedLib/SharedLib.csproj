@@ -19,5 +19,6 @@
     <ItemGroup>
         <Folder Include="Pages\Article\" />
         <Folder Include="Pages\Profile\" />
+        <Folder Include="Pages\Settings\" />
     </ItemGroup>
 </Project>

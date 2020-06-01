@@ -115,6 +115,34 @@ namespace Infrastructure.Clients
             return response.Profile;
         }
 
+        public async Task<User> GetUserAsync(string token, CancellationToken cancellationToken = default)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/user", UriKind.Relative));
+            httpRequest.Headers.Add("Accept", "application/json");
+            httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+
+            var response = await HandleRequest<UserResponse>(httpRequest, cancellationToken);
+            return response.User;
+        }
+
+        public async Task<User> UpdateUserAsync(User user, string token, CancellationToken cancellationToken = default)
+        {
+
+            var updateUserRequest = new UserUpdateRequest { User = user };
+            var requestBody = JsonSerializer.Serialize(updateUserRequest, _jsonSerializerOptions);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, new Uri($"api/user", UriKind.Relative))
+            {
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+            httpRequest.Headers.Add("Accept", "application/json");
+            httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+
+            var response = await HandleRequest<UserResponse>(httpRequest, cancellationToken);
+            return response.User;
+        }
+
         public async Task<Profile> FollowProfileAsync(string username, string? token, CancellationToken cancellationToken = default)
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/profiles/{username}/follow", UriKind.Relative));
@@ -144,7 +172,7 @@ namespace Infrastructure.Clients
         public async Task<User> LoginAsync(Login login, CancellationToken cancellationToken = default)
         {
             var loginRequest = new LoginRequest { User = login };
-            var requestBody = System.Text.Json.JsonSerializer.Serialize(loginRequest, _jsonSerializerOptions);
+            var requestBody = JsonSerializer.Serialize(loginRequest, _jsonSerializerOptions);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/users/login", UriKind.Relative))
             {
                 Content = new StringContent(requestBody, Encoding.UTF8, "application/json"),

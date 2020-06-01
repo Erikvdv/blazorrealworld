@@ -1,0 +1,126 @@
+﻿@using Application.Services
+@using Application.Exceptions
+@using SharedLib.Extensions
+
+@inject NavigationManager _navigationManager
+@inject IConduitApiService _apiService
+@inject CustomAuthenticationStateProvider _authenticationStateProvider
+
+@page "/settings"
+
+@if (_pageIsLoading)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <div class="settings-page">
+        <div class="container page">
+            <div class="row">
+                <div class="col-md-6 offset-md-3 col-xs-12">
+                    <h1 class="text-xs-center">Your Settings</h1>
+                    <ListErrors ErrorList=_errors />
+                    <EditForm Model="@_user" OnValidSubmit="HandleValidSubmit">
+                        <fieldset>
+                            <fieldset class="form-group">
+                                <InputText class="form-control"
+                                           type="text"
+                                           disabled="@_isUpdating"
+                                           @bind-Value="_user.Image"
+                                           placeholder="URL of profile picture" />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <InputText class="form-control form-control-lg"
+                                           type="text"
+                                           disabled="@_isUpdating"
+                                           @bind-Value="_user.Username"
+                                           placeholder="Username" />
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <InputText class="form-control form-control-lg"
+                                           rows="8"
+                                           disabled="@_isUpdating"
+                                           @bind-Value="_user.Bio"
+                                           placeholder="Short bio about you">@_user.Bio</InputText>
+                                    </fieldset>
+                                    <fieldset class="form-group">
+                                        <InputText class="form-control form-control-lg"
+                                                   type="email"
+                                                   disabled="@_isUpdating"
+                                                   placeholder="Email"
+                                                   @bind-Value="_user!.Email" />
+                                    </fieldset>
+                                    <fieldset class="form-group">
+                                        <InputText class="form-control form-control-lg"
+                                                   disabled="@_isUpdating"
+                                                   type="password"
+                                                   placeholder="New Password"
+                                                   @bind-Value=@_user.Password />
+                                    </fieldset>
+                                    <button class="btn btn-lg btn-primary pull-xs-right"
+                                            disabled="@_isUpdating"
+                                            type="submit">
+                                        Update Settings
+                                    </button>
+                                </fieldset>
+                            </EditForm>
+                            <!-- Line break for logout button -->
+                            <hr />
+                            <button class="btn btn-outline-danger" @onclick="() => Logout()">
+                                Or click here to logout.
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+
+@code {
+    [CascadingParameter]
+    private BrowserStateProvider _browserStateProvider { get; set; }
+
+    private string? _loggedinUser;
+    private bool _pageIsLoading = true;
+    private bool _isUpdating = false;
+    private Application.Models.User? _user;
+    public Dictionary<string, string[]> _errors { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+
+        _loggedinUser = userState.User.Identity.Name;
+        if (_loggedinUser == null)
+        {
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+        _user = await _apiService.GetUserAsync(_authenticationStateProvider.GetToken());
+        _pageIsLoading = false;
+
+    }
+
+    private async Task Logout()
+    {
+        _authenticationStateProvider.SignOutUser();
+        await _browserStateProvider.SaveTokenAsync("");
+        _navigationManager.NavigateTo("/");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _isUpdating = true;
+        try
+        {
+            _user = await _apiService.UpdateUserAsync(_user, _authenticationStateProvider.GetToken());
+            _isUpdating = false;
+            _navigationManager.NavigateTo($"/profile/{_user.Username}");
+        }
+        catch (ApiException ex)
+        {
+            _errors = ex.ErrorList;
+        }
+
+    }
+}
