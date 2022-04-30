@@ -70,7 +70,7 @@
 
     private void ValidateForm()
     {
-        _formIsValid = (!string.IsNullOrEmpty(_login.Email) && !string.IsNullOrEmpty(_login.Password));
+        _formIsValid = !string.IsNullOrEmpty(_login.Email) && !string.IsNullOrEmpty(_login.Password);
     }
 
     private async Task Submit()

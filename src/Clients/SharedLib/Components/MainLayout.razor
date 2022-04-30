@@ -2,14 +2,13 @@
 @using Application.Services
 @using Application.Models;
 
-
 @inherits LayoutComponentBase
 @inject CustomAuthenticationStateProvider _authenticationStateProvider
 @inject IConduitApiService _apiService
 
 @if (_isInitialised)
 {
-    <Header Title="Conduit" />
+    <Header Title="Conduit"></Header>
 
 
     @Body

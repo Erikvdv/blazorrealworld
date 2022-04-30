@@ -9,7 +9,7 @@ using SharedLib.Extensions;
 using Blazored.LocalStorage;
 
 
-namespace ServerClient
+namespace ServerApp
 {
     public class Startup
     {
